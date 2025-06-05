@@ -1,0 +1,43 @@
+<div class="container mt-4">
+  <h2>{{ isEditMode ? 'Edit Task' : 'Create New Task' }}</h2>
+
+  <div *ngIf="isLoading && isEditMode" class="alert alert-info">Loading task details...</div>
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+  <form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label for="title" class="form-label">Title</label>
+      <input type="text" id="title" class="form-control" formControlName="title"
+             [ngClass]="{ 'is-invalid': title?.invalid && (title?.dirty || title?.touched) }">
+      <div *ngIf="title?.invalid && (title?.dirty || title?.touched)" class="invalid-feedback">
+        <div *ngIf="title?.errors?.['required']">Title is required.</div>
+        <div *ngIf="title?.errors?.['maxlength']">Title cannot be more than 100 characters.</div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="description" class="form-label">Description</label>
+      <textarea id="description" class="form-control" formControlName="description" rows="3"
+                [ngClass]="{ 'is-invalid': description?.invalid && (description?.dirty || description?.touched) }"></textarea>
+      <div *ngIf="description?.invalid && (description?.dirty || description?.touched)" class="invalid-feedback">
+        <div *ngIf="description?.errors?.['maxlength']">Description cannot be more than 500 characters.</div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="status" class="form-label">Status</label>
+      <select id="status" class="form-select" formControlName="status"
+              [ngClass]="{ 'is-invalid': status?.invalid && (status?.dirty || status?.touched) }">
+        <option *ngFor="let stat of availableStatuses" [value]="stat">{{ stat }}</option>
+      </select>
+      <div *ngIf="status?.invalid && (status?.dirty || status?.touched)" class="invalid-feedback">
+        <div *ngIf="status?.errors?.['required']">Status is required.</div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary me-2" [disabled]="taskForm.invalid || isLoading">
+      {{ isLoading ? (isEditMode ? 'Updating...' : 'Creating...') : (isEditMode ? 'Update Task' : 'Create Task') }}
+    </button>
+    <button type="button" class="btn btn-secondary" (click)="router.navigate(['/tasks'])">Cancel</button>
+  </form>
+</div>

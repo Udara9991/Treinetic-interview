@@ -1,0 +1,53 @@
+<div class="container mt-4">
+  <h2>Task List</h2>
+
+  <div class="mb-3 d-flex justify-content-between align-items-center">
+    <div>
+      <label for="statusFilter" class="form-label me-2">Filter by Status:</label>
+      <select
+        id="statusFilter"
+        class="form-select d-inline-block"
+        style="width: auto;"
+        [(ngModel)]="statusFilter"
+        (ngModelChange)="onFilterChange($event)">
+        <option *ngFor="let status of availableStatuses" [value]="status">{{ status }}</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" (click)="navigateToCreate()">Add New Task</button>
+  </div>
+
+  <div *ngIf="isLoading" class="alert alert-info">Loading tasks...</div>
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+  <div *ngIf="!isLoading && !error && filteredTasks.length === 0" class="alert alert-warning">
+    No tasks found.
+  </div>
+
+  <div *ngIf="!isLoading && !error && filteredTasks.length > 0" class="table-responsive">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th scope="col">Title</th>
+          <th scope="col">Description</th>
+          <th scope="col">Status</th>
+          <th scope="col">Created At</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let task of filteredTasks">
+          <td>{{ task.title }}</td>
+          <td>{{ task.description | slice:0:50 }}{{ (task.description && task.description.length > 50) ? '...' : '' }}</td>
+          <td><span class="badge bg-secondary">{{ task.status }}</span></td>
+          <td>{{ task.createdAt | date:'medium' }}</td>
+          <td>
+            <button class="btn btn-sm btn-info me-2" (click)="navigateToEdit(task.id)">Edit</button>
+            <button class="btn btn-sm btn-danger" (click)="deleteTask(task.id)">Delete</button>
+            <!-- Optional: View Details Button -->
+            <!-- <button class="btn btn-sm btn-outline-secondary ms-2" (click)="viewDetails(task.id)">View</button> -->
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
